@@ -4,54 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>お問い合わせフォーム</title>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    document.getElementById("contact-form").addEventListener("submit", function(event) {
-      event.preventDefault();
   
-      // クエリからアプリ名を取得
-      const urlParams = new URLSearchParams(window.location.search);
-      const appName = urlParams.get("app") || "アプリ名不明";
-  
-      // フォームデータを取得
-      const email = document.getElementById("email").value;
-      const message = document.getElementById("message").value;
-  
-      // バックエンドのエンドポイント
-      const apiEndpoint = "https://mail-inquery.onrender.com/mail/send";
-  
-      // 送信データ
-      const requestData = {
-        from: email,
-        subject: `お問い合わせ from ${appName}`,
-        content: message
-      };
-  
-      // APIリクエスト
-      fetch(apiEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("HTTP error " + response.status);
-        }
-        return response.json();
-      })
-      .then(() => {
-        document.getElementById("success-message").style.display = "block";
-        document.getElementById("error-message").style.display = "none";
-        document.getElementById("contact-form").reset();
-      })
-      .catch(() => {
-        document.getElementById("error-message").style.display = "block";
-        document.getElementById("success-message").style.display = "none";
-      });
-    });
-  </script>
   
   <style>
     /* 全体のスタイル */
@@ -142,31 +95,50 @@
       <div class="error-message" id="error-message" style="display: none;">送信に失敗しました。もう一度お試しください。</div>
     </form>
   </div>
+  <script type="module">
+  import CONFIG from './config.ts';
 
-  <script>
     document.getElementById("contact-form").addEventListener("submit", function(event) {
+        console.log("submit");
       event.preventDefault();
-
+  
       // クエリからアプリ名を取得
       const urlParams = new URLSearchParams(window.location.search);
       const appName = urlParams.get("app") || "アプリ名不明";
-
+  
       // フォームデータを取得
       const email = document.getElementById("email").value;
       const message = document.getElementById("message").value;
-
-      // メール送信
-      emailjs.send("service_o6c2y4p", "service_o6c2y4p", {
-        email: email,
-        message: message,
-        app_name: appName
+  
+      // バックエンドのエンドポイント
+      const apiEndpoint = CONFIG.API_ENDPOINT
+  
+      // 送信データ
+      const requestData = {
+        to: email,
+        subject: `お問い合わせ from ${appName}`,
+        content: message
+      };
+  
+      // APIリクエスト
+      fetch(apiEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
       })
       .then(() => {
         document.getElementById("success-message").style.display = "block";
         document.getElementById("error-message").style.display = "none";
         document.getElementById("contact-form").reset();
       })
-      .catch(() => {
+      .catch((e) => {
         document.getElementById("error-message").style.display = "block";
         document.getElementById("success-message").style.display = "none";
       });
