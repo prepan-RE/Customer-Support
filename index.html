@@ -6,10 +6,53 @@
   <title>お問い合わせフォーム</title>
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    (function() {
-      emailjs.init("U1IqwrCoTXqlHcc-1"); // EmailJSのUser IDを記入
-    })();
+    document.getElementById("contact-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+  
+      // クエリからアプリ名を取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const appName = urlParams.get("app") || "アプリ名不明";
+  
+      // フォームデータを取得
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+  
+      // バックエンドのエンドポイント
+      const apiEndpoint = "https://mail-inquery.onrender.com/mail/send";
+  
+      // 送信データ
+      const requestData = {
+        from: email,
+        subject: `お問い合わせ from ${appName}`,
+        content: message
+      };
+  
+      // APIリクエスト
+      fetch(apiEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+      })
+      .then(() => {
+        document.getElementById("success-message").style.display = "block";
+        document.getElementById("error-message").style.display = "none";
+        document.getElementById("contact-form").reset();
+      })
+      .catch(() => {
+        document.getElementById("error-message").style.display = "block";
+        document.getElementById("success-message").style.display = "none";
+      });
+    });
   </script>
+  
   <style>
     /* 全体のスタイル */
     body {
