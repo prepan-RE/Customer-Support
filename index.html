@@ -95,9 +95,7 @@
       <div class="error-message" id="error-message" style="display: none;">送信に失敗しました。もう一度お試しください。</div>
     </form>
   </div>
-  <script type="module">
-  import CONFIG from './config.ts';
-
+  <script>
     document.getElementById("contact-form").addEventListener("submit", function(event) {
         console.log("submit");
       event.preventDefault();
@@ -111,7 +109,7 @@
       const message = document.getElementById("message").value;
   
       // バックエンドのエンドポイント
-      const apiEndpoint = CONFIG.API_ENDPOINT
+      const apiEndpoint = "https://mail-inquery.onrender.com/mail/send"
   
       // 送信データ
       const requestData = {
